@@ -12,3 +12,6 @@ What can the code in this repository do right now?
   The user can define a list of verbs and tenses, and the program will randomly select a subject, verb, and tense, asking the user to conjugate. The answer validation process uses BeautifulSoup to scrape wordreference.com to find the right answer. The HTML is a little unfriendly, so I had to use (what feels like) a fairly inefficient process for answer checking.
   
 I am looking for other opportunities to create additional features that would be useful for passionate natural language learners!
+
+# EDIT 2 SEPT. 2020
+Spanish conjugation functionality added, bugs relating to answer checking/handling vowel exceptions in French fixed. 
