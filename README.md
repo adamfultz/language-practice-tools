@@ -13,5 +13,8 @@ What can the code in this repository do right now?
   
 I am looking for other opportunities to create additional features that would be useful for passionate natural language learners!
 
-# EDIT 2 SEPT. 2020
+# Edit 2 Sept. 2020
 Spanish conjugation functionality added, bugs relating to answer checking/handling vowel exceptions in French fixed. 
+
+# Edit 29 Sept. 2020
+Fixed a couple of bugs in the conjugation function, and added a new file (vocab_learn.py) containing a vocabularly reinforcement tool. I wanted to move away from the inflexibility of keeping both the questions and answers, so I made a first pass at implementing answer checking using BeautifulSoup to parse wordreference.com (again). It's not a foolproof method because the text from wordreference is tokenized and user answer is compared against each of the tokens, meaning that you could answer something completely wrong, but if the words were in the html, you would be marked correct. 
