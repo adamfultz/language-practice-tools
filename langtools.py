@@ -6,44 +6,11 @@ Created on Tue Jul  7 14:31:56 2020
 """
 # Flash card system
 import re
-import csv
 import random
 import requests
 from bs4 import BeautifulSoup
 
 
-def flashcard():
-    mode = input("Mode? Choose flashcard, verb: ")
-    if re.search("f(lashcards)?", mode, re.IGNORECASE):
-        dic = {} # Initialized empty dictionary to store English/foreign word pairings
-        filename = input("filename: ")
-        with open(filename, 'r', encoding = 'UTF-8') as csvfile:
-            fsource = csv.reader(csvfile)
-            atype = input("Answer in English? (y/n): ")
-            if re.search("y(es)?", atype, re.IGNORECASE):
-                for row in fsource:
-                    dic[row[0]] = row[1:] # stores all English words as possible answers
-            if re.search("n(o)?", atype, re.IGNORECASE):
-                for row in fsource:
-                    ind = random.randint(1,len(row)-1) # chooses random English translation
-                    dic[row[ind]] = row[0]
-        # Start asking questions
-        rvec = list(range(len(dic)))
-        random.shuffle(rvec) # randomizes order of indices
-        print("type 'exit' to end this session")
-        for i in range(len(dic)):
-            ind = rvec[i] # randomized index
-            k = list(dic.keys())
-            v = list(dic.values())
-            answer = input("Translate the following: " + k[ind] + "\n")
-            if answer.lower() in v[ind]:
-                print("CORRECT!")
-            elif re.search("exit", answer, re.IGNORECASE):
-                break
-            else:
-                print("WRONG! The correct answer is " + " or ".join(v[ind]))
-                
-    
 '''
 Choose Language
 
@@ -55,24 +22,24 @@ def choose_lang(langin, option, tense = None):
         
         if option == "qset":
             vbank = [
-                "aimer",
-                "penser",
-                "jouer",
-                "chanter",
-                "choisir",
-                "vendre",
-                "venir",
-                "vouloir",
-                "savoir",
-                "aller",
-                "faire",
-                "avoir",
-                "être",
-                "dire",
-                "pouvoir",
-                "prendre",
-                "mettre",
-                "appeler"]
+                "suivre", "haïr", "voir",
+                "penser", "apparaître",
+                "tenir", "enseigner",
+                "sortir", "couper",
+                "essayer", "moudre",
+                "vendre", "cueillir",
+                "venir", "sentir",
+                "vouloir", "montrer",
+                "savoir", "raconter",
+                "aller", "bouger",
+                "faire", "craindre",
+                "avoir", "épeler",
+                "être", "soutenir"
+                "dire", "mélanger",
+                "pouvoir", "gérer",
+                "prendre", "jurer",
+                "mettre", "accourir"
+                "appeler", "devoir"]
             subjects = ["je/j'", "tu", "il/elle", "nous", "vous", "ils/elles"]
             tenses = ["présent", "imparfait", "subjonctif", "plus-que-parfait",
                       "futur simple", "conditionnel\nprésent", "futur antérieur"]
@@ -118,7 +85,15 @@ def choose_lang(langin, option, tense = None):
         
         if option == "qset":
             vbank = [
-                "comer"]
+                "comer",
+                "estar",
+                "ser",
+                "estudiar",
+                "tener",
+                "beber",
+                "vivir",
+                "querer",
+                "ir"]
             subjects = ["yo", "tú", "él/ella/Ud.", "nosotros", "ellos/ellas/Uds."]
             tenses = ["presente"]
             URLstem = "https://www.wordreference.com/conj/EsVerbs.aspx?v="
@@ -163,7 +138,8 @@ Asks 5 questions each time.
 def conjugate():    
     langin = input("Choose Language: ")    
     vbank, subjects, tenses, URLstem, lang = choose_lang(langin, "qset")
-    
+    # initializes empty list for wrong answers to be reviewed at the end
+    reviewset = []
     # Choosing subject,verb,tense combination
     cont = True
     i = 0
@@ -185,14 +161,17 @@ def conjugate():
         # Calling findans function to get answer with extra text stuck on
         anstext = findans(lang, vbank[r1], table, subjects[r2], tenses[r3])
         # Checking user answer against parsed text
-        checkans(lang, answer, anstext, subjects[r2])
+        reviewset.append(checkans(lang, answer, anstext, subjects[r2]))
         
         # Prompts for user to continue
         i += 1
         if (i % 5) == 0 and i != 0:
             again = input("Go again? (y/n): ")
             if again.lower() == "n":
-                cont = False    
+                cont = False
+    
+    # Reviewing incorrect answers
+    review_wrong(reviewset)
 
 '''
 Find Answer
@@ -252,6 +231,33 @@ def checkans(lang, answer, anstext, subject):
         
     if answer == correct:
         print("Correct!")
+        reviewset = tuple()
     else:
         print("Wrong! The correct answer is: " + correct)
+        reviewset = (subject, answer, correct)
+    return reviewset
+
+'''
+Review Wrong
+
+Returns a list of incorrect answers made by the user for review
+'''
+def review_wrong(reviewset):
+    print("Summary of incorrect answers:")
+    correct = True
+    for wrong in reviewset:
+        if wrong:
+            print("subject: " + wrong[0])
+            print("your answer: " + wrong[1])
+            print("correct answer: " + wrong[2] + "\n")
+            correct = False
+    if correct:
+        print("No mistakes, nice work!")
+    
+
+
+
+
+
+
         
